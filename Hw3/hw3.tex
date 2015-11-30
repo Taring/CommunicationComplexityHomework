@@ -1,0 +1,126 @@
+\documentclass[11pt, fleqn, a4paper]{report}
+%a4paper : 21.0cm * 29.7cm
+
+\usepackage{xeCJK}
+\setCJKmainfont[BoldFont=STFangsong, ItalicFont=STKaiti]{STSong}
+\setCJKsansfont[BoldFont=STHeiti]{STSong}
+\setCJKmonofont{STFangsong}
+
+\usepackage{amsmath}
+\usepackage{amssymb,amsfonts}
+\usepackage{tabularx}
+%\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{tikz}
+\usepackage[T1]{fontenc}
+\usepackage{upquote}
+\usepackage[colorlinks, linkcolor=blue, anchorcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage{ltxtable, filecontents}
+\usepackage{mathrsfs}  
+
+\setlength{\topmargin}{0cm}
+
+\setlength{\oddsidemargin}{0.4cm}
+\setlength{\evensidemargin}{0.4cm}
+\setlength{\hoffset}{-0.2in}
+\setlength{\textwidth}{440pt}
+\setlength{\textheight}{650pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\setlength{\mathindent}{0pt}
+
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{lightgray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+	basicstyle=\footnotesize,
+	breaklines=true,
+	commentstyle=\color{mygreen},
+	numbers=left,
+	numbersep=5pt,
+	numberstyle=\tiny\color{mygray},
+	stringstyle=\color{mymauve},
+	showstringspaces=false,
+	showspaces=false,
+	showtabs=false,
+	tabsize=2,
+	framexleftmargin=10mm,
+	frame=none,
+	backgroundcolor=\color[RGB]{245,245,244},
+	keywordstyle=\bf\color{blue},
+	identifierstyle=\bf,
+	numberstyle=\color[RGB]{0,192,192},
+	commentstyle=\it\color[RGB]{0,96,96},
+	stringstyle=\rmfamily\slshape\color[RGB]{128,0,0}
+}
+
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+
+
+\begin{document}
+
+\begin{titlepage}
+\vspace*{40mm}
+\begin{center}
+{\Huge Homework \quad 3}\\[30mm]
+
+{\Large 5130309059 \quad \quad 李佳骏}\\[3mm]
+\texttt{taringlee@sjtu.edu.cn}\\[10mm]
+
+2015.10.19
+
+\end{center}
+\end{titlepage}
+
+\section*{Exercise 3.15}
+
+Thanks for my roommate’s help to tell me how to simulate \textbf{Hoeffding's inequality} to solve this exercise and like hints above that "The case of zero error protocols is slightly different:", the proof will imitate the proof of \textbf{Theorem 3.14}.\\
+
+\textbf{PROOF}：It is sufficient to prove that any public coin protocol $\mathcal{P}$, using any number of random bits, can be transformed into another public coin protocol, $\mathcal{P}'$, with the same communication complexity that uses $O(\log{n})$ random bits without error. The proof then follows because Alice can simply flip that many random coins by herself, send the random coin flips to Bob, and the two players proceed as in $\mathcal{P}'$.
+
+Let $Z(x, y, r)$ be a random variable that gets communication length that $\mathcal{P}$ gives on input $(x,y)$ and random string $r$. Because Alice can send $x$ to Bob directly, $Z_{r \in \Pi}(x,y,r) \leq n$, for all $(x,y)$. We will build a new protocol, which uses fewer random bits, using the probabilistic method. Let $t$ and $\delta$ be a parameter(to be fixed) and $r_1,...,r_t$ be $t$ strings. For such strings, define a protocol $\mathcal{P}_{r_1,...,r_t}$ as follows: Alice and Bob choose $1 \leq i \leq t$ uniformly at random and then proceed as in $\mathcal{P}$ with $r_i$ as their common random string. We now show that there exist strings $r_1,...,r_t$ such that $E_i[Z(x,y,r_i)] \leq R_0^{pub}(f)+\delta$, for all $(x,y)$. For this choice of strings the protocol $\mathcal{P}_{r_1,...,r_t}$ is the desired protocol. To do so, we choose the $t$ values $r_1,...,r_t$ at random(according to the probability distribution $\Pi$). Consider a particular input pair $(x,y)$ and compute the probability that $E_i[Z(x,y,r_i)] > R_0^{pub}(f) + \delta$. By the \textbf{Hoeffding's inequality}, since $E_r[Z(x,y,r) \leq R_0{pub}(f)]$, we get
+$$\mathrm{Pr}_{r_1,...,r_t}[(E_i[Z(x,y,r_i)] - R_0^{pub}(f)) > \delta] \leq e^{\frac{-2t\delta^2}{n^2}}$$
+
+By choosing $t = O(n^3)$ and $\delta = \log{n}$, this is smaller than $2^{-2n}$. Thus, for a random choice of $r_1,...,r_t$ the probability that for $some$ input $(x,y)$, $E_i[Z(x,y,r_i)] > R_0^{pub}(f) + \delta$ is smaller than $2^{-2n}2^{2n} = 1$. This implies that there exists a choice of $r_1,...,r_t$ where for $every$ $(x,y)$ the communication length of protocol $\mathcal{P}_{r_1,...,r_t}$ is at most $R_0^{pub}(f) + \delta$. Finally note that the number of random bits used by the protocol $\mathcal{P}_{r_1,...,r_t}$ is $\log{t} = O(\log{n})$ and that the communication complexity is bounded by $R_0^{pub}(f) + \delta + \mathcal{P}_{r_1,...,r_t} = R_0^{pub}(f) + \log{n} + \log_{t} = O(R_0^{pub}(f) + \log{n})$.
+
+\section*{Exercise 3.31}
+
+It's difficult for me to solo this exercise. Fortunately, we found a paper, \emph{UNBIASED BITS FROM SOURCES OF WEAK RANDOMNESS AND PROBABILISTIC COMMUNICATION COMPLEXITY}, to help us to settle it. However, this paper show tons of strange definitions and I could not comprehend them completely. Hence, I finished this problem 3 days later.
+
+We called function $f$ is $\delta$-robust on a rectangle R if $f$ satisfied that
+$$\mid Pr[f(x,y) = 1 | (x,y) \in R]  - Pr[f(x, y) = 0 | (x,y)] \mid \in [\frac{1-\delta}{2}, \frac{1+\delta}{2}]$$
+
+And We prove \textbf{Theorem 1}, there are at least $1 - 2^{-2^n}$ fraction of function which $\delta$-robust on every rectangle R ($\mid R \mid \geq t$) satisfied $\log{t} - n - 5 \geq 2\log{\delta^{-1}}$.
+
+To prove this theorem, we use \textbf{Chernoff Bound} firstly.
+$$Pr[ \frac{1}{|R|} \sum_{(x,y)\in R}{f(x,y) - \frac{1}{2}} \geq \frac{\delta}{2} ] \leq 2^{1 - \frac{\delta^2}{8}t}$$
+
+And like we did in 3.15. We use \textbf{Union Bound} to detect the probability of function rectangle out of $\delta$-robust. It means $2^{2^n} 2^{2^n} 2^{1 - \frac{\delta^2}{8}t} \leq 2^{-2^n}$. So, we know that \textbf{Theorem 1}is legal with high probability.
+
+Hence we prove \textbf{Theorem 2}, Suppose that for every $\log{t} \geq 2n - k - 1 + \log{\delta}$, the Boolean function $f$ which is $\delta$-robust on every rectangle $R$($\mid R \mid \geq t$). Then $D_{\frac{1}{2} - \delta}^{\mathrm{uniform}}(f) > k$.
+
+For every $\gamma \in {0,1}^k$, denote by $C(\gamma)$ the set of $(x,y)$ pairs on which the communication of Alice and Bob is $\gamma$. Let $G(\gamma) = {(x,y) \in C(\gamma) : P(x,y) = f(x,y)}$. Since the protocol has at least $\frac{1+\delta}{2}$ accuracy, we sum them, and find
+$$\sum_{\gamma \in {0,1}^k}{|G(\gamma)| \geq (\frac{1}{2} + \delta)2^{2n} }$$
+Thus we say that $C(\gamma)$ is SMALL if $|C(\gamma)| < 2^{2n - k - 1}\delta$. Since there are at most $2^k$ rectangles $C(\gamma)$ and the number of points in all small rectangles is at most $2^{2n - 1}\delta$. Thus we have:
+$$\sum_{\gamma \geq \mathrm{SMALL}}{|G{\gamma}| \geq (\frac{1 + \delta}{2})2^{2n}}$$
+This implies that $\exists \gamma \in {0,1}^k$ s.t. $|C(\gamma)| \geq 2^{2n-k-1}\delta$ and $|G(\gamma)| \geq \frac{1 + \delta}{2}|C(\gamma)|$. We find a contradiction that $\log_2{|C{\gamma}|} \geq 2n - k - 1 + log_2{\delta}$ without $\delta$-robust happened.
+
+Finally, by setting $k = n - 1 - 2\log{\delta^{-1}}$, and $\epsilon = \frac{\delta}{2}$, there are at least $1-2^{-2^n}$ fraction of all functions and we get $D_{\frac{1}{2}-\epsilon}^{\mathrm{uniform}}(f) = n - 1 - 2\log{\delta^{-1}} = n - O(\log{\epsilon^{-1}})$
+
+\end{document}
